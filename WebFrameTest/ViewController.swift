@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UIWebViewDelegate {
 
     @IBOutlet weak var webView: UIWebView!
     @IBAction func backButton(sender: AnyObject) {
@@ -44,7 +44,7 @@ class ViewController: UIViewController {
         let requestObj = NSURLRequest(URL: url!)
         //webView.scalesPageToFit = true
         webView.loadRequest(requestObj)
-        //webView.delegate = self;
+        webView.delegate = self;
         print(webView.loading)
         webView.hidden = false
         print(webView.loading)
@@ -75,19 +75,17 @@ class ViewController: UIViewController {
    // }
     
     
-    func webView(webView: UIWebView, didFailLoadWithError error: NSError?) {
-        print("aaaaaaaaaa")
-        //let myAlert = UIAlertController(title: "Alert", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.Alert)
-        //self.presentViewController(myAlert, animated: true, completion: nil)
+    func webView(webView: UIWebView, shouldStartLoadWithRequest request: NSURLRequest, navigationType: UIWebViewNavigationType) -> Bool
+    {
+        let shouldOpenInExternalBrowser = request.URL?.query?.containsString("openInExternalBrowser=true")
+
+        if (navigationType == UIWebViewNavigationType.LinkClicked && shouldOpenInExternalBrowser==true) {
+            UIApplication.sharedApplication().openURL(request.URL!)
+            return false
+        }
+        return true
     }
-    
-//    func webView(webView: UIWebView!, didFailLoadWithError error: NSError!) {
-  //      print("Webview fail with error \(error)");
-    //}
-/**
-    func webView(webView: UIWebView!, shouldStartLoadWithRequest request: NSURLRequest!, navigationType: UIWebViewNavigationType) -> Bool {
-    return true;
-    }
+    /*
     
     func webViewDidStartLoad(webView: UIWebView!) {
         print("Webview started Loading")
